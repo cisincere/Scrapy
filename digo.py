@@ -24,6 +24,15 @@ def get_img_url(img):
         return ()
 
 
+def get_style_tag(bs: BeautifulSoup, file_name):
+    styles = bs.find_all("style")
+    i = 0
+    for style in styles:
+        i += 1
+        with open(f'{file_name}_{i}.css', "w+", encoding="UTF-8") as f:
+            f.write(style.text)
+
+
 def dow_img(bs: BeautifulSoup, base_dir="."):
     imgs = bs.find_all('img')
     for img in imgs:
@@ -45,7 +54,7 @@ def dow_img(bs: BeautifulSoup, base_dir="."):
                     if not file_name or file_name in '?|><\*&^%$./*!#@!)()__+>?:"':
                         file_name = img_url.split("%2")[-1].split("&")[0]
                     else:
-                        file_name = file_name + '.' +file_suffix.split(".")[-1].split("&")[0]
+                        file_name = file_name + '.' + file_suffix.split(".")[-1].split("&")[0]
                 else:
                     file_dir = "/".join(img_url.split("/")[0:-1:])
                     file_url = base_url + img_url
@@ -85,4 +94,5 @@ for url in list:
     bs = BeautifulSoup(resp.text)
 
     dow_img(bs)
-    # dow_link_css(bs)
+    dow_link_css(bs)
+    get_style_tag(bs, url.split("/")[-1])
